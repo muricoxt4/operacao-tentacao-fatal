@@ -74,8 +74,8 @@
       size: 'stretch', minWidth: 260, maxWidth: 480, minHeight: 455, maxHeight: 840,
       showCover: false, usePortrait: true, autoSize: true, drawShadow: true,
       flippingTime: 1250, maxShadowOpacity: 0.48, mobileScrollSupport: false,
-      swipeDistance: 45, clickEventForward: true, useMouseEvents: true,
-      disableFlipByClick: false, showPageCorners: true, startZIndex: 1
+      swipeDistance: 45, clickEventForward: false, useMouseEvents: false,
+      disableFlipByClick: false, showPageCorners: false, startZIndex: 1
     });
     reader.on('init', update);
     reader.on('flip', update);
@@ -85,6 +85,27 @@
       update();
     });
     reader.loadFromHTML(pages);
+    // Handle touch and mouse consistently; the library only renders the turn.
+    let gesture = null;
+    bookElement.addEventListener('pointerdown', event => {
+      if (turning || !event.isPrimary || event.target.closest('button, a')) return;
+      gesture = {id:event.pointerId,x:event.clientX,y:event.clientY};
+      bookElement.setPointerCapture(event.pointerId);
+    });
+    bookElement.addEventListener('pointerup', event => {
+      if (!gesture || event.pointerId !== gesture.id) return;
+      const start = gesture;
+      gesture = null;
+      const dx = event.clientX - start.x;
+      const dy = event.clientY - start.y;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.3) {
+        advance(dx < 0 ? 1 : -1);
+      } else if (Math.abs(dx) < 12 && Math.abs(dy) < 12) {
+        const rect = bookElement.getBoundingClientRect();
+        advance(start.x - rect.left < rect.width * 0.28 ? -1 : 1);
+      }
+    });
+    bookElement.addEventListener('pointercancel', () => { gesture = null; });
     previous.addEventListener('click', () => advance(-1));
     next.addEventListener('click', () => advance(1));
     document.querySelectorAll('[data-next]').forEach(button => button.addEventListener('click', event => {

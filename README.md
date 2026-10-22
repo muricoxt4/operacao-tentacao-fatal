@@ -2,6 +2,10 @@
 
 Site estático em HTML, CSS e JavaScript. Capa e folhas com animação de virada, navegação por toque, mouse e teclado, adaptação para celular e redução de movimento.
 
+Endereço: https://muricoxt4.github.io/operacao-tentacao-fatal/
+
+Uma folha por vez em todas as telas. Toque no lado direito para avançar, no lado esquerdo para voltar ou deslize horizontalmente. Os botões Anterior/Próxima também funcionam por toque. As imagens foram otimizadas para conexões móveis.
+
 ## Publicar no GitHub Pages
 
 1. Envie **o conteúdo desta pasta** para a raiz de um repositório no GitHub, incluindo `assets/`, `vendor/` e `.nojekyll`.
