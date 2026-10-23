@@ -16,3 +16,6 @@
 
 /* Verso da folha durante a virada: papel avesso, com o texto da frente transparecendo espelhado. */
 .page.is-verso{background-image:linear-gradient(90deg,#3d24121f,#3d241208 30%,#3d241214),url('assets/papel-arquivo.jpg');background-color:#d6bb8a;cursor:default}.page.is-verso .page-inner{transform:scaleX(-1);box-shadow:inset 0 0 26px #5a371c33}.page.is-verso .page-inner>*{opacity:.11;filter:blur(.5px) grayscale(.5);pointer-events:none}.page.cover.is-verso,.page.back-cover.is-verso{background-image:linear-gradient(#7d552aa8,#8c6130a0),url('assets/papel-arquivo.jpg')}
+
+/* Folha 02 ganhou uma frase: texto um pouco mais compacto para caber. */
+.page[data-title="As ocorrências"] .body-copy{font-size:2.85cqw;line-height:1.5}.page[data-title="As ocorrências"] .body-copy .lead{font-size:3.3cqw;line-height:1.45}
