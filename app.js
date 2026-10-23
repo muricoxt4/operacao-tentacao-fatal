@@ -85,6 +85,26 @@
       update();
     });
     reader.loadFromHTML(pages);
+    // In portrait the library folds a clone of the page; style that clone as the back of the sheet.
+    const originals = new Set(pages);
+    new MutationObserver(records => {
+      for (const record of records) {
+        for (const node of record.addedNodes) {
+          if (!(node instanceof HTMLElement) || !node.classList.contains('page') || originals.has(node)) continue;
+          node.classList.add('is-verso');
+          node.setAttribute('aria-hidden', 'true');
+          node.inert = true;
+          node.querySelectorAll('[id]').forEach(element => element.removeAttribute('id'));
+        }
+      }
+    }).observe(bookElement, {childList: true, subtree: true});
+    // Turning back also folds a clone, so the curling part shows the verso and the page underneath its front.
+    const collection = reader.getPageCollection();
+    const flippingPage = collection.getFlippingPage.bind(collection);
+    collection.getFlippingPage = direction => {
+      const page = flippingPage(direction);
+      return direction === 1 && reader.getOrientation() === 'portrait' ? page.newTemporaryCopy() : page;
+    };
     // Handle touch and mouse consistently; the library only renders the turn.
     let gesture = null;
     bookElement.addEventListener('pointerdown', event => {
