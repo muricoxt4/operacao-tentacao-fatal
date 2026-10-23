@@ -10,6 +10,7 @@
   const status = document.getElementById('reader-status');
   const pages = Array.from(bookElement.querySelectorAll('.page'));
   const dots = Array.from(document.querySelectorAll('.page-dots i'));
+  const sheetCount = pages.slice(1, -1).filter(page => !page.dataset.label).length;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   let reader;
   let turning = false;
@@ -41,7 +42,12 @@
     next.setAttribute('aria-label', first ? 'Abrir dossiê' : 'Próxima página');
     let label = 'CAPA';
     if (last) label = 'ADENDO RESERVADO';
-    else if (!first) label = portrait ? `FOLHA ${String(current).padStart(2, '0')} / 08` : `FOLHAS ${String(current).padStart(2, '0')}—${String(Math.min(current + 1, 8)).padStart(2, '0')} / 08`;
+    else if (pages[current].dataset.label) label = pages[current].dataset.label;
+    else if (!first) {
+      // Photo annexes sit between sheets, so number only the regular sheets.
+      const sheet = pages.slice(1, current + 1).filter(page => !page.dataset.label).length;
+      label = `FOLHA ${String(sheet).padStart(2, '0')} / ${String(sheetCount).padStart(2, '0')}`;
+    }
     pageName.textContent = label;
     dots.forEach((dot, index) => dot.classList.toggle('active', index === current || (!portrait && !first && !last && index === current + 1)));
     pages.forEach((page,index) => {
